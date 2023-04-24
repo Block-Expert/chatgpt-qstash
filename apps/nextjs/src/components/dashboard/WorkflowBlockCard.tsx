@@ -4,12 +4,13 @@ import {
   ChevronUpIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { WorkflowBlock, WorkflowBlockRun } from "@prisma/client";
-import { CheckIcon, Pencil1Icon } from "@radix-ui/react-icons";
-import dayjs , { Dayjs } from "dayjs";
+import { CheckIcon, Pencil1Icon, Pencil2Icon } from "@radix-ui/react-icons";
+import dayjs, { Dayjs } from "dayjs";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 
@@ -34,14 +35,13 @@ export default function WorkflowBlockCard({
   const [scheduledAt, setDateTime] = useState<Dayjs | null>(
     dayjs(new Date()).add(delayedTime, "minute"),
   );
-  console.log(block.name, block.delay);
 
-  const handleScheduleTime = (value : any) => {
-    setDateTime(value)
-      const diffMins: number =
+  const handleScheduleTime = (value: any) => {
+    setDateTime(value);
+    const diffMins: number =
       (new Date(value).getTime() - new Date().getTime()) / 1000 / 60; // minutes
-      const delay = diffMins > 0 ? Math.round(diffMins) : 0;
-      setDelayedTime(delay);
+    const delay = diffMins > 0 ? Math.round(diffMins) : 0;
+    setDelayedTime(delay);
   };
 
   const { mutate: deleteBlock } = api.workflowBlock.delete.useMutation({
@@ -160,6 +160,7 @@ export default function WorkflowBlockCard({
             <textarea
               className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-gigas-500 focus:border-gigas-500 sm:text-sm"
               value={prompt}
+              maxLength={block.maxLength}
               onChange={(e) => setPrompt(e.target.value)}
             />
           ) : (
@@ -167,6 +168,9 @@ export default function WorkflowBlockCard({
               {block.description || "No prompt"}
             </ReactMarkdown>
           )}
+        </div>
+        <div className="flex justify-end gap-2 text-gray-500 text-[0.8rem]">
+          <PencilIcon width="15px" /> <span>Max Length:{block.maxLength}</span>
         </div>
         {lastRun?.logs?.length ? (
           <div>

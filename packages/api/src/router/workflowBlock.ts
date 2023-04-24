@@ -12,7 +12,10 @@ export const workflowBlockRouter = createTRPCRouter({
     .input(
       z.object({
         workflowId: z.string(),
+        description: z.string(),
         prevOrder: z.number(),
+        name: z.string(),
+        maxLength: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -22,7 +25,7 @@ export const workflowBlockRouter = createTRPCRouter({
           where: {
             workflowId: input.workflowId,
             order: {
-              gte: input.prevOrder,
+              gt: input.prevOrder,
             },
           },
           data: {
@@ -33,10 +36,11 @@ export const workflowBlockRouter = createTRPCRouter({
         }),
         ctx.prisma.workflowBlock.create({
           data: {
-            name: "New Block",
-            description: "You are an AI assistant",
+            name: input.name,
+            description: input.description,
             order: input.prevOrder + 1,
             delay: 0,
+            maxLength: input.maxLength,
             workflow: {
               connect: {
                 id: input.workflowId,
@@ -53,7 +57,7 @@ export const workflowBlockRouter = createTRPCRouter({
       z.object({
         blockId: z.string().min(1),
         name: z.string().optional(),
-        description: z.string().optional(),
+        description: z.string(),
         order: z.number().optional(),
         delay: z.number().optional(),
       }),
@@ -63,7 +67,7 @@ export const workflowBlockRouter = createTRPCRouter({
         where: { id: input.blockId },
         data: {
           ...(input.name && { name: input.name }),
-          ...(input.description && { description: input.description }),
+          ...{ description: input.description || "" },
           ...(input.order && { order: input.order }),
           ...(input.delay && { delay: input.delay }),
         },

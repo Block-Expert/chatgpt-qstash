@@ -1,6 +1,15 @@
 import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import {
+  BookOpenIcon,
+  DocumentChartBarIcon,
+  EnvelopeIcon,
+  InboxIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
+import { Box, SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
+import { TwitterLogoIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 
 import { api } from "~/utils/api";
@@ -27,6 +36,27 @@ const WorkflowPage: React.FC = () => {
       await refetch();
     },
   });
+
+  const actions = [
+    {
+      icon: <BookOpenIcon height="25px" color="blue" />,
+      name: "Write Blog Post",
+      prompt: "Write a blog post for DOMAIN.com.",
+      maxLength: 160,
+    },
+    {
+      icon: <TwitterLogoIcon width="25px" height="25px" color="blue" />,
+      name: "Write Tweets",
+      prompt: "Write a 1000 word blog post about the subject x.",
+      maxLength: 100,
+    },
+    {
+      icon: <EnvelopeIcon height="25px" color="blue" />,
+      name: "Write Email",
+      prompt: "Write a email post.",
+      maxLength: 160,
+    },
+  ];
 
   useEffect(() => {
     // Set logsHiddenBlocks to the correct length of blocks
@@ -105,19 +135,32 @@ const WorkflowPage: React.FC = () => {
               }}
             />
             <div className="flex justify-center">
-              <button
-                type="button"
-                onClick={() => {
-                  createBlock({
-                    workflowId: workflow.id,
-                    prevOrder: block.order,
-                  });
-                  toast.success("Block created");
-                }}
-                className="rounded-full border border-gigas-600 p-1.5 text-gigas-600 shadow-sm hover:bg-gigas-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gigas-600"
-              >
-                <PlusIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
+              <Box sx={{ position: "relative", mt: 10 }}>
+                <SpeedDial
+                  ariaLabel="Blog SpeedDial"
+                  sx={{ position: "absolute", bottom: 16, right: 16 }}
+                  direction="right"
+                  icon={<SpeedDialIcon />}
+                >
+                  {actions.map((action) => (
+                    <SpeedDialAction
+                      key={action.name}
+                      icon={action.icon}
+                      tooltipTitle={action.name}
+                      onClick={() => {
+                        createBlock({
+                          name: action.name,
+                          workflowId: workflow.id,
+                          prevOrder: block.order,
+                          description: action.prompt,
+                          maxLength: action.maxLength,
+                        });
+                        toast.success("Block created");
+                      }}
+                    />
+                  ))}
+                </SpeedDial>
+              </Box>
             </div>
           </Fragment>
         ))}

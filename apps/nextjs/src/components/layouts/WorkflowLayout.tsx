@@ -52,26 +52,26 @@ export default function WorkflowLayout({
   const scheduleWorkflow = async () => {
     for (const block of blocks) {
       if (block.delay > 0) {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_QSTASH_URL}${process.env.NEXT_PUBLIC_API}/webhooks/workflowblock-cron`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_QSTASH_TOKEN}`,
-            "Content-Type": "application/json",
-            "Upstash-Delay": `${block.delay}m`,
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_QSTASH_URL}${process.env.NEXT_PUBLIC_API}/webhooks/workflowblock-cron`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_QSTASH_TOKEN}`,
+              "Content-Type": "application/json",
+              "Upstash-Delay": `${block.delay}m`,
+            },
+            body: JSON.stringify({
+              workflowId: workflow.id,
+              workflowBlockId: block?.id,
+            }),
           },
-          body: JSON.stringify({
-            workflowId: workflow.id,
-            workflowBlockId: block?.id,
-          }),
-        },
-      );
-      
-      if (res.ok) {
-        console.log(await res.json());
+        );
+
+        if (res.ok) {
+          console.log(await res.json());
+        }
       }
-    }
     }
   };
 
@@ -84,7 +84,7 @@ export default function WorkflowLayout({
               pages={[
                 {
                   name: "Workflows",
-                  href: "/",
+                  href: `../spaces/${workflow.spaceId}`,
                   current: false,
                 },
               ]}

@@ -14,7 +14,12 @@ const config = {
   eslint: { ignoreDuringBuilds: !!process.env.CI },
   typescript: { ignoreBuildErrors: !!process.env.CI },
   images: {
-    domains: ["cdn.fruition.net", "fru.io", "images.unsplash.com", "cdn.fru.io"],
+    domains: [
+      "cdn.fruition.net",
+      "fru.io",
+      "images.unsplash.com",
+      "cdn.fru.io",
+    ],
   },
 };
 

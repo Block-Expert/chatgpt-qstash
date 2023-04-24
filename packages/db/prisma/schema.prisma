@@ -43,6 +43,7 @@ model WorkflowBlock {
   runs        WorkflowBlockRun[]
   order       Int
   delay       Int
+  maxLength   Int                @default(1000)
 }
 
 model WorkflowRun {

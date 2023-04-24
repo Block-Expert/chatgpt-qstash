@@ -20,7 +20,7 @@ export default function UserInviteModal({
     close();
     const result = await inviteUser({
       recipient: inviteEmail,
-      host: window.location.host,
+      host: `${window.location.protocol}//${window.location.host}`,
     });
     if (result.status) {
       toast.success(result.msg);
